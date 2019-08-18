@@ -13,6 +13,7 @@ public class SalesApp {
 		SalesActivityReport report = this.generateReport(headers, reportDataList);
 		if (report == null) {
 			return;
+
 		}
 		uploadDocument(report);
 	}

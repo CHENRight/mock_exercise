@@ -14,6 +14,7 @@ public class InOrderParkingStrategy implements ParkingStrategy {
 		for (ParkingLot parkingLot : parkingLots) {
 			if (parkingLot.isFull()) {
 				continue;
+
 			}
 			
 			parkingLot.getParkedCars().add(car);

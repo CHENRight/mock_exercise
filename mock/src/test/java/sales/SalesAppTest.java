@@ -61,6 +61,7 @@ public class SalesAppTest {
 
 		Sales sales = spySalesApp.getSales(any());
 		assertNull(sales);
+
 	}
 	@Test
 	public void should_return_list_contains_Time_when_isNatTrade_is_true(){

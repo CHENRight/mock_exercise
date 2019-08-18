@@ -82,9 +82,7 @@ public class InOrderParkingStrategyTest {
 
     @Test
     public void testPark_givenThereIsOneFullParkingLot_thenCreateReceipt(){
-
         /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for one available parking lot but it is full */
-
     }
 
     @Test

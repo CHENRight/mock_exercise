@@ -1,6 +1,4 @@
 package sales;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -8,61 +6,53 @@ import java.util.List;
 public class SalesApp {
 
 	public void generateSalesActivityReport(String salesId, int maxRow, boolean isNatTrade, boolean isSupervisor) {
-		
-		SalesDao salesDao = new SalesDao();
-		SalesReportDao salesReportDao = new SalesReportDao();
-		List<String> headers = null;
-		
-		List<SalesReportData> filteredReportDataList = new ArrayList<SalesReportData>();
-		
-		if (salesId == null) {
-			return;
-		}
-		
-		Sales sales = salesDao.getSalesBySalesId(salesId);
-		
-		Date today = new Date();
-		if (today.after(sales.getEffectiveTo())
-				|| today.before(sales.getEffectiveFrom())){
-			return;
-		}
-		
-		List<SalesReportData> reportDataList = salesReportDao.getReportData(sales);
-		
-		for (SalesReportData data : reportDataList) {
-			if ("SalesActivity".equalsIgnoreCase(data.getType())) {
-				if (data.isConfidential()) {
-					if (isSupervisor) {
-						filteredReportDataList.add(data);
-					}
-				}else {
-					filteredReportDataList.add(data);
-				}
-			}
-		}
-		
-		List<SalesReportData> tempList = new ArrayList<SalesReportData>();
-		for (int i=0; i < reportDataList.size() || i < maxRow; i++) {
-			tempList.add(reportDataList.get(i));
-		}
-		filteredReportDataList = tempList;
-		
-		if (isNatTrade) {
-			headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Time");
-		} else {
-			headers = Arrays.asList("Sales ID", "Sales Name", "Activity", "Local Time");
-		}
-		
+		Sales sales = getSales(salesId);
+		if (sales == null) { return;}
+		List<SalesReportData> reportDataList = getSalesReportDao().getReportData(sales);
+		List<String> headers = getHeaders(isNatTrade);
 		SalesActivityReport report = this.generateReport(headers, reportDataList);
-		
-		EcmService ecmService = new EcmService();
-		ecmService.uploadDocument(report.toXml());
-		
+		if (report == null) {
+			return;
+		}
+		uploadDocument(report);
 	}
 
-	private SalesActivityReport generateReport(List<String> headers, List<SalesReportData> reportDataList) {
+	protected Sales getSales(String salesId) {
+		Sales sales = getSalesDao().getSalesBySalesId(salesId);
+		if (isSales(sales)) {
+			return null;
+		}
+		return sales;
+	}
+
+	private boolean isSales(Sales sales){
+		Date today = new Date();
+		return sales == null || today.after(sales.getEffectiveTo()) || today.before(sales.getEffectiveFrom());
+	}
+
+	protected List<String> getHeaders(boolean isNatTrade) {
+		if (isNatTrade) {
+			return Arrays.asList("Sales ID", "Sales Name", "Activity", "Time");
+		}
+		return Arrays.asList("Sales ID", "Sales Name", "Activity", "Local Time");
+	}
+
+	protected void uploadDocument(SalesActivityReport report) {
+		getEcmService().uploadDocument(report.toXml());
+	}
+
+	protected SalesDao getSalesDao() {
+		return new SalesDao();
+	}
+	protected SalesReportDao getSalesReportDao() {
+		return new SalesReportDao();
+	}
+	protected EcmService getEcmService() {
+		return new EcmService();
+	}
+
+	protected SalesActivityReport generateReport(List<String> headers, List<SalesReportData> reportDataList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

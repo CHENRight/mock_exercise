@@ -9,6 +9,9 @@ import java.util.Optional;
 public class VipParkingStrategy implements ParkingStrategy {
 
 	CarDao carDao;
+	public CarDao getCarDao() {
+		return carDao;
+	}
 
 	public VipParkingStrategy(){
 		carDao = new CarDaoImpl();
@@ -30,7 +33,7 @@ public class VipParkingStrategy implements ParkingStrategy {
 		return createNoSpaceReceipt(car);
 	}
 
-	private Receipt createReceipt(ParkingLot parkingLot, Car car) {
+	protected Receipt createReceipt(ParkingLot parkingLot, Car car) {
 		
 		Receipt receipt = new Receipt();
 		receipt.setCarName(car.getName());
@@ -38,7 +41,7 @@ public class VipParkingStrategy implements ParkingStrategy {
 		return receipt;
 	}
 
-	private Receipt createNoSpaceReceipt(Car car) {
+	protected Receipt createNoSpaceReceipt(Car car) {
 		
 		Receipt receipt = new Receipt();
 		receipt.setCarName(car.getName());
@@ -46,8 +49,8 @@ public class VipParkingStrategy implements ParkingStrategy {
 		return receipt;
 	}
 
-	private boolean isAllowOverPark(Car car){
-		return carDao.isVip(car.getName()) && StringUtils.contains(car.getName(), "A");
+	protected boolean isAllowOverPark(Car car){
+		return getCarDao().isVip(car.getName()) && StringUtils.contains(car.getName(), "A");
 	}
 
 	@Override
